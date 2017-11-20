@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/taion/react-router-scroll#readme",
   "dependencies": {
+    "prop-types": "^15.6.0",
     "scroll-behavior": "envato/scroll-behavior#lparry/lparry-silence-safari-ios-with-cookies-disabled",
     "warning": "^3.0.0"
   },

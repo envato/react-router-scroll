@@ -1,95 +1,101 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import ScrollBehavior from 'scroll-behavior';
+import React from "react"
+import { withRouter } from "react-router-dom"
+import PropTypes from "prop-types"
+import ScrollBehavior from "scroll-behavior"
 
-import SessionStorage from './StateStorage';
+import SessionStorage from "./StateStorage"
 
 const propTypes = {
-  shouldUpdateScroll: React.PropTypes.func,
-  children: React.PropTypes.element.isRequired,
-  location: React.PropTypes.object.isRequired,
-  history: React.PropTypes.object.isRequired,
-};
+  shouldUpdateScroll: PropTypes.func,
+  children: PropTypes.element.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+}
 
 const childContextTypes = {
-  scrollBehavior: React.PropTypes.object.isRequired,
-};
+  scrollBehavior: PropTypes.object.isRequired,
+}
 
 class ScrollContext extends React.Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
-    const { history } = props;
+    const { history } = props
 
     this.scrollBehavior = new ScrollBehavior({
       addTransitionHook: history.listen,
       stateStorage: new SessionStorage(),
       getCurrentLocation: () => this.props.location,
       shouldUpdateScroll: this.shouldUpdateScroll,
-    });
+    })
 
-    this.scrollBehavior.updateScroll(null, this.getRouterProps());
+    this.scrollBehavior.updateScroll(null, this.getRouterProps())
   }
 
   getChildContext() {
     return {
       scrollBehavior: this,
-    };
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { location, history } = this.props;
-    const prevLocation = prevProps.location;
+    const { location, history } = this.props
+    const prevLocation = prevProps.location
 
     if (location === prevLocation) {
-      return;
+      return
     }
 
     const prevRouterProps = {
       history: prevProps.history,
       location: prevProps.location,
-    };
+    }
 
-    this.scrollBehavior.updateScroll(prevRouterProps, { history, location });
+    this.scrollBehavior.updateScroll(prevRouterProps, { history, location })
   }
 
   componentWillUnmount() {
-    this.scrollBehavior.stop();
+    this.scrollBehavior.stop()
   }
 
   getRouterProps() {
-    const { history, location } = this.props;
-    return { history, location };
+    const { history, location } = this.props
+    return { history, location }
   }
 
   shouldUpdateScroll = (prevRouterProps, routerProps) => {
-    const { shouldUpdateScroll } = this.props;
+    const { shouldUpdateScroll } = this.props
     if (!shouldUpdateScroll) {
-      return true;
+      return true
     }
 
     // Hack to allow accessing scrollBehavior._stateStorage.
     return shouldUpdateScroll.call(
-      this.scrollBehavior, prevRouterProps, routerProps,
-    );
-  };
+      this.scrollBehavior,
+      prevRouterProps,
+      routerProps
+    )
+  }
 
   registerElement = (key, element, shouldUpdateScroll) => {
     this.scrollBehavior.registerElement(
-      key, element, shouldUpdateScroll, this.getRouterProps(),
-    );
-  };
+      key,
+      element,
+      shouldUpdateScroll,
+      this.getRouterProps()
+    )
+  }
 
-  unregisterElement = (key) => {
-    this.scrollBehavior.unregisterElement(key);
-  };
+  unregisterElement = key => {
+    this.scrollBehavior.unregisterElement(key)
+  }
 
   render() {
-    return React.Children.only(this.props.children);
+    return React.Children.only(this.props.children)
   }
 }
 
-ScrollContext.propTypes = propTypes;
-ScrollContext.childContextTypes = childContextTypes;
+ScrollContext.propTypes = propTypes
+ScrollContext.childContextTypes = childContextTypes
 
-export default withRouter(ScrollContext);
+export default withRouter(ScrollContext)

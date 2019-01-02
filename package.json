@@ -9,7 +9,7 @@
   "scripts": {
     "build": "rimraf lib && babel src -d lib",
     "lint": "eslint src test *.js",
-    "prepublish": "npm run build",
+    "__prepublish": "npm run build",
     "tdd": "cross-env NODE_ENV=test karma start",
     "test": "npm run lint && npm run testonly",
     "testonly": "npm run tdd -- --single-run"
